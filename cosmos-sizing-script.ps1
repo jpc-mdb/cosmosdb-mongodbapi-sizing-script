@@ -4,8 +4,10 @@ $ids = (Get-AzResource -ResourceType Microsoft.DocumentDB/databaseAccounts).Reso
 
 # Get data points for each DB
 foreach($item in $ids){
-    # $resource = (Get-AzResource -ResourceId $item)
-    # $account = Get-AzCosmosDBAccount -ResourceGroupName "mdb_sa" -Name "boots"
+    # Set up the global variables used to query the cluster
+    $accountName = (Get-AzResource -ResourceId $item).Name
+    $resourceGroupName = (Get-AzResource -ResourceId $item).ResourceGroupName
+    $mongodbDatabase = (Get-AzCosmosDBMongoDBDatabase -ResourceGroupName $resourceGroupName -AccountName $accountName)
 
     # Get data usage in GB
     $metric = Get-AzMetric -ResourceId $item -MetricName "DataUsage" -WarningAction Ignore
@@ -28,9 +30,7 @@ foreach($item in $ids){
     Write-Output "$name total Requests: $data since $firstRequest"
 
     # Get collections and indexes
-    $accountName = (Get-AzResource -ResourceId $item).Name
-    $mongodbDatabase = (Get-AzCosmosDBMongoDBDatabase -ResourceGroupName "mdb_sa" -AccountName $accountName)
-    $mongodbCollections = (Get-AzCosmosDBMongoDBCollection -ResourceGroupName "mdb_sa" -AccountName $accountName -DatabaseName $mongodbDatabase.Name)
+    $mongodbCollections = (Get-AzCosmosDBMongoDBCollection -ResourceGroupName $resourceGroupName -AccountName $accountName -DatabaseName $mongodbDatabase.Name)
     $totalIndexes = 0
     $totalCollections = $mongodbCollections.Count
     
