@@ -8,16 +8,17 @@ foreach($item in $ids){
     $accountName = (Get-AzResource -ResourceId $item).Name
     $resourceGroupName = (Get-AzResource -ResourceId $item).ResourceGroupName
     $mongodbDatabase = (Get-AzCosmosDBMongoDBDatabase -ResourceGroupName $resourceGroupName -AccountName $accountName)
+    $dbName = $mongodbDatabase.Name
 
     # Get data usage in GB
     $metric = Get-AzMetric -ResourceId $item -MetricName "DataUsage" -WarningAction Ignore
     $data = ($metric.Data | Select-Object -Last 1).Total/1024/1024/1024
-    Write-Output "$mongodbDatabase.Name total Data Usage: $data GB"
+    Write-Output "$dbName total Data Usage: $data GB"
 
     # Get index usage in GB
     $metric = Get-AzMetric -ResourceId $item -MetricName "IndexUsage" -WarningAction Ignore
     $data = ($metric.Data | Select-Object -Last 1).Total/1024/1024/1024
-    Write-Output "$mongodbDatabase.Name total Index Usage: $data GB"
+    Write-Output "$dbName total Index Usage: $data GB"
 
     # Get number of requests
     $startTime = (Get-Date).AddDays(-90).ToString("yyyy-MM-ddTHH:mm:ssZ")
@@ -27,7 +28,7 @@ foreach($item in $ids){
         $data += $d.Count
     }
     $firstRequest = ($metric.Data | Select-Object -First 1).TimeStamp
-    Write-Output "$mongodbDatabase.Name total Requests: $data since $firstRequest"
+    Write-Output "$dbName total Requests: $data since $firstRequest"
 
     # Get collections and indexes
     $mongodbCollections = (Get-AzCosmosDBMongoDBCollection -ResourceGroupName $resourceGroupName -AccountName $accountName -DatabaseName $mongodbDatabase.Name)
@@ -38,11 +39,11 @@ foreach($item in $ids){
         $nIndexes = $coll.Resource.Indexes.Count
         $totalIndexes += $nIndexes
     }
-    Write-Output "$mongodbDatabase.Name total Collections: $totalCollections"
-    Write-Output "$mongodbDatabase.Name total Indexes: $totalIndexes"
+    Write-Output "$dbName total Collections: $totalCollections"
+    Write-Output "$dbName total Indexes: $totalIndexes"
 
     # Get documents
     $metric = Get-AzMetric -ResourceId $item -MetricName "DocumentCount" -WarningAction Ignore
     $data = ($metric.Data | Select-Object -Last 1).Total
-    Write-Output "$mongodbDatabase.Name total Documents: $data"
+    Write-Output "$dbName total Documents: $data"
 }
