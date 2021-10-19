@@ -20,8 +20,8 @@ foreach($item in $ids){
     $data = ($metric.Data | Select-Object -Last 1).Total/1024/1024/1024
     Write-Output "$dbName total Index Usage: $data GB"
 
-    # Get number of requests
-    $startTime = (Get-Date).AddDays(-90).ToString("yyyy-MM-ddTHH:mm:ssZ")
+    # Get number of requests in the last 30 days
+    $startTime = (Get-Date).AddDays(-30).ToString("yyyy-MM-ddTHH:mm:ssZ")
     $metric = Get-AzMetric -ResourceId $item -MetricName "MongoRequests" -WarningAction Ignore -TimeGrain 12:00:00 -StartTime $startTime
     $data = 0
     foreach($d in $metric.Data){
@@ -29,6 +29,26 @@ foreach($item in $ids){
     }
     $firstRequest = ($metric.Data | Select-Object -First 1).TimeStamp
     Write-Output "$dbName total Requests: $data since $firstRequest"
+
+    # Get number of request units in the last 30 days
+    $startTime = (Get-Date).AddDays(-30).ToString("yyyy-MM-ddTHH:mm:ssZ")
+    $metric = Get-AzMetric -ResourceId $item -MetricName "TotalRequestUnits" -WarningAction Ignore -TimeGrain 00:01:00 -StartTime $startTime
+    $data = 0
+    foreach($d in $metric.Data){
+        $data += $d.Total
+    }
+    Write-Output "$dbName total Request Units in the last 30 days: $data"
+
+    $averageRequestsPerMinute = $data / $metric.Data.Count
+    Write-Output "$dbName average Request Units per minute over the last 30 days: $averageRequestsPerMinute"
+
+    $maxRequestUnits = 0
+    foreach($d in $metric.Data){
+        if($d.Total -gt $maxRequestUnits){
+            $maxRequestUnits = $d.Total
+        }
+    }
+    Write-Output "$dbName max Request Units per minute over the last 30 days: $maxRequestUnits"
 
     # Get collections and indexes
     $mongodbCollections = (Get-AzCosmosDBMongoDBCollection -ResourceGroupName $resourceGroupName -AccountName $accountName -DatabaseName $mongodbDatabase.Name)
@@ -46,4 +66,7 @@ foreach($item in $ids){
     $metric = Get-AzMetric -ResourceId $item -MetricName "DocumentCount" -WarningAction Ignore
     $data = ($metric.Data | Select-Object -Last 1).Total
     Write-Output "$dbName total Documents: $data"
+
+    # Insert a blank line for easier reading of output
+    Write-Output ""
 }
