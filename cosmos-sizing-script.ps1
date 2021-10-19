@@ -9,6 +9,7 @@ foreach($item in $ids){
     $resourceGroupName = (Get-AzResource -ResourceId $item).ResourceGroupName
     $mongodbDatabase = (Get-AzCosmosDBMongoDBDatabase -ResourceGroupName $resourceGroupName -AccountName $accountName)
     $dbName = $mongodbDatabase.Name
+    $startTime = (Get-Date).AddDays(-30).ToString("yyyy-MM-ddTHH:mm:ssZ") # last 30 days
 
     # Get data usage in GB
     $metric = Get-AzMetric -ResourceId $item -MetricName "DataUsage" -WarningAction Ignore
@@ -21,7 +22,6 @@ foreach($item in $ids){
     Write-Output "$dbName total Index Usage: $data GB"
 
     # Get number of requests in the last 30 days
-    $startTime = (Get-Date).AddDays(-30).ToString("yyyy-MM-ddTHH:mm:ssZ")
     $metric = Get-AzMetric -ResourceId $item -MetricName "MongoRequests" -WarningAction Ignore -TimeGrain 12:00:00 -StartTime $startTime
     $data = 0
     foreach($d in $metric.Data){
@@ -31,7 +31,6 @@ foreach($item in $ids){
     Write-Output "$dbName total Requests: $data since $firstRequest"
 
     # Get number of request units in the last 30 days
-    $startTime = (Get-Date).AddDays(-30).ToString("yyyy-MM-ddTHH:mm:ssZ")
     $metric = Get-AzMetric -ResourceId $item -MetricName "TotalRequestUnits" -WarningAction Ignore -TimeGrain 00:01:00 -StartTime $startTime
     $data = 0
     foreach($d in $metric.Data){
