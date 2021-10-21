@@ -10,13 +10,18 @@ foreach($item in $ids){
     $mongodbDatabases = (Get-AzCosmosDBMongoDBDatabase -ResourceGroupName $resourceGroupName -AccountName $accountName)
     $startTime = (Get-Date).AddDays(-30).ToString("yyyy-MM-ddTHH:mm:ssZ") # last 30 days
 
+    Write-Output "--------------------------------------------------------------------------------------"
+    Write-Output "Account Name: $accountName" 
+    Write-Output "Resource Group: $resourceGroupName" 
+    Write-Output "--------------------------------------------------------------------------------------"
+    Write-Output ""
+
     foreach($db in $mongodbDatabases){
         $dbName = $db.Name
 
         Write-Output("Database: $dbName")
         # Insert a separating line for easier reading of output
         Write-Output "--------------------------------------------------------------------------------------"
-        Write-Output "-----------"
         # Get data usage in GB
         $metric = Get-AzMetric -ResourceId $item -MetricName "DataUsage" -WarningAction Ignore
         $data = ($metric.Data | Select-Object -Last 1).Total/1024/1024/1024
@@ -38,7 +43,6 @@ foreach($item in $ids){
 
         # Insert a separating line for easier reading of output
         Write-Output "--------------------------------------------------------------------------------------"
-        Write-Output "-----------"
         Write-Output("Collections Data:")
         # Get collections and indexes
         $mongodbCollections = (Get-AzCosmosDBMongoDBCollection -ResourceGroupName $resourceGroupName -AccountName $accountName -DatabaseName $dbName)
@@ -61,7 +65,6 @@ foreach($item in $ids){
         
         # Insert a separating line for easier reading of output
         Write-Output "--------------------------------------------------------------------------------------"
-        Write-Output "-----------"
         Write-Output("Request Units over the last 30 days:")
         # Get number of request units in the last 30 days
         $metric = Get-AzMetric -ResourceId $item -MetricName "TotalRequestUnits" -WarningAction Ignore -TimeGrain 00:01:00 -StartTime $startTime
@@ -87,7 +90,6 @@ foreach($item in $ids){
 
         # Insert a separating line for easier reading of output
         Write-Output "--------------------------------------------------------------------------------------"
-        Write-Output "-----------"
         Write-Output("Mongo Request Charge over the last 30 days:")
         # Get number of Mongo request charges in the last 30 days
         $metric = Get-AzMetric -ResourceId $item -MetricName "MongoRequestCharge" -WarningAction Ignore -TimeGrain 00:01:00 -StartTime $startTime
@@ -111,7 +113,8 @@ foreach($item in $ids){
         }
         Write-Output "Max / minute: $maxRequestUnits"
         
-        # Insert a blank line for easier reading of output
+        # Insert some spacing for easier reading of output
+        Write-Output ""
         Write-Output "======================================================================================"
         Write-Output ""
     }
