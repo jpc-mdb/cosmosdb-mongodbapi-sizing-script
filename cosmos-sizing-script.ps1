@@ -11,15 +11,19 @@ foreach($item in $ids){
     $dbName = $mongodbDatabase.Name
     $startTime = (Get-Date).AddDays(-30).ToString("yyyy-MM-ddTHH:mm:ssZ") # last 30 days
 
+    Write-Output("Database: $dbName")
+    # Insert a separating line for easier reading of output
+    Write-Output "--------------------------------------------------------------------------------------"
+
     # Get data usage in GB
     $metric = Get-AzMetric -ResourceId $item -MetricName "DataUsage" -WarningAction Ignore
     $data = ($metric.Data | Select-Object -Last 1).Total/1024/1024/1024
-    Write-Output "$dbName total Data Usage: $data GB"
+    Write-Output "Total Data Usage: $data GB"
 
     # Get index usage in GB
     $metric = Get-AzMetric -ResourceId $item -MetricName "IndexUsage" -WarningAction Ignore
     $data = ($metric.Data | Select-Object -Last 1).Total/1024/1024/1024
-    Write-Output "$dbName total Index Usage: $data GB"
+    Write-Output "Total Index Usage: $data GB"
 
     # Get number of requests in the last 30 days
     $metric = Get-AzMetric -ResourceId $item -MetricName "MongoRequests" -WarningAction Ignore -TimeGrain 12:00:00 -StartTime $startTime
@@ -28,27 +32,12 @@ foreach($item in $ids){
         $data += $d.Count
     }
     $firstRequest = ($metric.Data | Select-Object -First 1).TimeStamp
-    Write-Output "$dbName total Requests: $data since $firstRequest"
+    Write-Output "Total Requests: $data since $firstRequest"
 
-    # Get number of request units in the last 30 days
-    $metric = Get-AzMetric -ResourceId $item -MetricName "MongoRequestCharge" -WarningAction Ignore -TimeGrain 00:01:00 -StartTime $startTime
-    $data = 0
-    foreach($d in $metric.Data){
-        $data += $d.Total
-    }
-    Write-Output "$dbName total Request Units in the last 30 days: $data"
+    # Insert a separating line for easier reading of output
+    Write-Output "--------------------------------------------------------------------------------------"
 
-    $averageRequestsPerMinute = $data / $metric.Data.Count
-    Write-Output "$dbName average Request Units per minute over the last 30 days: $averageRequestsPerMinute"
-
-    $maxRequestUnits = 0
-    foreach($d in $metric.Data){
-        if($d.Total -gt $maxRequestUnits){
-            $maxRequestUnits = $d.Total
-        }
-    }
-    Write-Output "$dbName max Request Units per minute over the last 30 days: $maxRequestUnits"
-
+    Write-Output("Collections Data:")
     # Get collections and indexes
     $mongodbCollections = (Get-AzCosmosDBMongoDBCollection -ResourceGroupName $resourceGroupName -AccountName $accountName -DatabaseName $mongodbDatabase.Name)
     $totalIndexes = 0
@@ -58,14 +47,60 @@ foreach($item in $ids){
         $nIndexes = $coll.Resource.Indexes.Count
         $totalIndexes += $nIndexes
     }
-    Write-Output "$dbName total Collections: $totalCollections"
-    Write-Output "$dbName total Indexes: $totalIndexes"
+    Write-Output "Total Collections: $totalCollections"
+    Write-Output "Total Indexes: $totalIndexes"
 
     # Get documents
     $metric = Get-AzMetric -ResourceId $item -MetricName "DocumentCount" -WarningAction Ignore
     $data = ($metric.Data | Select-Object -Last 1).Total
-    Write-Output "$dbName total Documents: $data"
+    Write-Output "Total Documents: $data"
+    
+    # Insert a separating line for easier reading of output
+    Write-Output "--------------------------------------------------------------------------------------"
+    
+    Write-Output("Request Units over the last 30 days:")
+    # Get number of request units in the last 30 days
+    $metric = Get-AzMetric -ResourceId $item -MetricName "TotalRequestUnits" -WarningAction Ignore -TimeGrain 00:01:00 -StartTime $startTime
+    $data = 0
+    foreach($d in $metric.Data){
+        $data += $d.Total
+    }
+    Write-Output "Total: $data"
 
+    $averageRequestsPerMinute = $data / $metric.Data.Count
+    Write-Output "Average / minute: $averageRequestsPerMinute"
+
+    $maxRequestUnits = 0
+    foreach($d in $metric.Data){
+        if($d.Total -gt $maxRequestUnits){
+            $maxRequestUnits = $d.Total
+        }
+    }
+    Write-Output "Max / minute: $maxRequestUnits"
+
+    # Insert a separating line for easier reading of output
+    Write-Output "--------------------------------------------------------------------------------------"
+    
+    Write-Output("Mongo Request Charge over the last 30 days:")
+    # Get number of Mongo request charges in the last 30 days
+    $metric = Get-AzMetric -ResourceId $item -MetricName "MongoRequestCharge" -WarningAction Ignore -TimeGrain 00:01:00 -StartTime $startTime
+    $data = 0
+    foreach($d in $metric.Data){
+        $data += $d.Total
+    }
+    Write-Output "Total: $data"
+
+    $averageRequestsPerMinute = $data / $metric.Data.Count
+    Write-Output "Average / minute: $averageRequestsPerMinute"
+
+    $maxRequestUnits = 0
+    foreach($d in $metric.Data){
+        if($d.Total -gt $maxRequestUnits){
+            $maxRequestUnits = $d.Total
+        }
+    }
+    Write-Output "Max / minute: $maxRequestUnits"
+    
     # Insert a blank line for easier reading of output
     Write-Output ""
 }
