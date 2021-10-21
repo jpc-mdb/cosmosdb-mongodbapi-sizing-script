@@ -31,7 +31,7 @@ foreach($item in $ids){
     Write-Output "$dbName total Requests: $data since $firstRequest"
 
     # Get number of request units in the last 30 days
-    $metric = Get-AzMetric -ResourceId $item -MetricName "TotalRequestUnits" -WarningAction Ignore -TimeGrain 00:01:00 -StartTime $startTime
+    $metric = Get-AzMetric -ResourceId $item -MetricName "MongoRequestCharge" -WarningAction Ignore -TimeGrain 00:01:00 -StartTime $startTime
     $data = 0
     foreach($d in $metric.Data){
         $data += $d.Total
