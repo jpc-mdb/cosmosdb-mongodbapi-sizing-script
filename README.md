@@ -27,10 +27,11 @@ brew install --cask powershell
 pwsh
 ```
 
-4. Once in Powershell, install Azure and CosmosDB dependencies
+4. Once in Powershell, install Azure, CosmosDB and MongoDB dependencies
 ```
 Install-Module -Name Az
 Install-Module -Name Az.CosmosDB
+Install-Module -Name Mdbc [Mdbc Github page](https://github.com/nightroman/Mdbc)
 ```
 
 # Running the script
@@ -41,8 +42,14 @@ Connect-AzAccount
 ```
 
 2. Run the script
+To display the results as plain text in the terminal window
 ```
 ./cosmos-sizing-script.ps1
+```
+
+To push the output as a document to a MongoDB Atlas cluster over API
+```
+./cosmos-sizing-script-json.ps1
 ```
 
 **`Notes`**
