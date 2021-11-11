@@ -34,11 +34,6 @@ Install-Module -Name Az.CosmosDB
 Install-Module -Name Mdbc [Mdbc Github page](https://github.com/nightroman/Mdbc)
 ```
 
-5. Import the Mdbc module
-```
-Import-Module Mdbc
-```
-
 # Running the script
 
 1. Connect to your Azure account (this will redirect you to the browser to authenticate)
