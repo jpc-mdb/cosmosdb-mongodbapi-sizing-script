@@ -1,4 +1,5 @@
 
+Write-Output "start executing sizing script..."
 # Get the list of all document DBs in the Azure account
 $ids = (Get-AzResource -ResourceType Microsoft.DocumentDB/databaseAccounts).ResourceId
 
@@ -87,9 +88,9 @@ foreach($item in $ids){
         Import-Module Mdbc
 
         # Connect to MongoDB and insert the document
-        $db = '[INSERT DB NAME]'
+        $db = 'cosmos_sizing'
         $coll = $accountName.Trim() + '-' + $dbName.Trim()
-        $connString = 'mongodb+srv://[USERNAME:PASSWORD]@[URL]/?[OPTIONS]'
+        $connString = 'mongodb+srv://jpc-mdb:jpc-mdb-pass@boots.trgge.mongodb.net/?retryWrites=true&w=majority'
 
         Connect-Mdbc -ConnectionString $connString -DatabaseName $db -CollectionName $coll
         
@@ -101,6 +102,7 @@ foreach($item in $ids){
             index_usage_db = $indexUsage
             total_requests = $requests
             requests_start = $firstRequest
+            ts = Get-Date
             collections = @{
                 total_collections = $totalCollections
                 total_indexes = $totalIndexes
@@ -121,3 +123,5 @@ foreach($item in $ids){
         Add-MdbcData -InputObject $document
     }
 }
+
+Write-Output "...completed executing sizing script"
