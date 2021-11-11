@@ -87,14 +87,12 @@ foreach($item in $ids){
         Import-Module Mdbc
 
         # Connect to MongoDB and insert the document
-        $db = 'cosmos_sizing'
+        $db = '[INSERT DB NAME]'
         $coll = $accountName.Trim() + '-' + $dbName.Trim()
-        $connString = 'mongodb+srv://jpc-mdb:jpc-mdb-pass@boots.trgge.mongodb.net/?retryWrites=true&w=majority'
+        $connString = 'mongodb+srv://[USERNAME:PASSWORD]@[URL]/?[OPTIONS]'
 
         Connect-Mdbc -ConnectionString $connString -DatabaseName $db -CollectionName $coll
         
-        # Type convert/parse our json string
-        # $document = new-object -TypeName MongoDB.Bson.BsonDocument
         $document = [PSCustomObject]@{
             account_name = $accountName
             resource_group_name = $resourceGroupName
