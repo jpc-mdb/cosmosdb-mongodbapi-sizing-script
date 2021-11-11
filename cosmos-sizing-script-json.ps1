@@ -88,10 +88,10 @@ foreach($item in $ids){
         Import-Module Mdbc
 
         # Connect to MongoDB and insert the document
-        $db = 'cosmos_sizing'
+        $db = '[DB NAME]'
         $coll = $accountName.Trim() + '-' + $dbName.Trim()
-        $connString = 'mongodb+srv://jpc-mdb:jpc-mdb-pass@boots.trgge.mongodb.net/?retryWrites=true&w=majority'
-
+        $connString = 'mongodb+srv://[USERNAME:PASSWORD]@[URL]/?[OPTIONS]'
+        
         Connect-Mdbc -ConnectionString $connString -DatabaseName $db -CollectionName $coll
         
         $document = [PSCustomObject]@{
