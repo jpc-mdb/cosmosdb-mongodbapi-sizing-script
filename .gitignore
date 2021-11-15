@@ -1,0 +1,14 @@
+
+.DS_Store
+._.DS_Store
+**/.DS_Store
+**/._.DS_Store
+.vscode/
+*.code-workspace
+**/__pycache__/
+**/*.pyc
+**/node_modules/
+atlas.properties
+
+# Settings
+settings.json
