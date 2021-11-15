@@ -27,6 +27,8 @@ brew install --cask powershell
 pwsh
 ```
 
+4. Update the settings.json file with the Atlas connection string to your cluster and the database that will capture the metrics
+
 4. Once in Powershell, install Azure, CosmosDB and MongoDB dependencies
 ```
 Install-Module -Name Az
