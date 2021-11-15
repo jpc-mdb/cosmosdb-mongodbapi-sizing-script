@@ -1,0 +1,4 @@
+{
+    "database_name": "[DB NAME]",
+    "connection_string": "mongodb+srv://[USERNAME:PASSWORD]@[URL]/?[OPTIONS]"
+}
