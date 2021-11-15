@@ -10,8 +10,9 @@ function Save-Document {
     Import-Module Mdbc
 
     # Connect to MongoDB and insert the document
-    $db = '[DB NAME]'
-    $connString = 'mongodb+srv://[USERNAME:PASSWORD]@[URL]/?[OPTIONS]'
+    $SettingsObject = Get-Content -Path settings.json | ConvertFrom-Json
+    $db = $SettingsObject.database_name
+    $connString = $SettingsObject.connection_string
 
     try {
             Connect-Mdbc -ConnectionString $connString -DatabaseName $db -CollectionName $Collection
