@@ -9,11 +9,12 @@ function Save-Document {
     # Push the data to MongoDB Atlas
     Import-Module Mdbc
 
-    # Connect to MongoDB and insert the document
+    # Get connection details from the settings file
     $SettingsObject = Get-Content -Path settings.json | ConvertFrom-Json
     $db = $SettingsObject.database_name
     $connString = $SettingsObject.connection_string
 
+    # Connect to MongoDB and insert the document
     try {
             Connect-Mdbc -ConnectionString $connString -DatabaseName $db -CollectionName $Collection
             Add-MdbcData -InputObject $Document 
