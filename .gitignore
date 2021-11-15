@@ -10,5 +10,5 @@
 **/node_modules/
 atlas.properties
 
-# Settings
-settings.json
+# Exclude settings
+settings.*

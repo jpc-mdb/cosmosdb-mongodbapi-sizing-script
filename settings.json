@@ -1,4 +1,4 @@
 {
-    "database_name": "cosmos_sizing",
-    "connection_string": "mongodb+srv://jpc-mdb:jpc-mdb-pass@boots.trgge.mongodb.net/?retryWrites=true&w=majority"
+    "database_name": "[DB NAME]",
+    "connection_string": "mongodb+srv://[USERNAME:PASSWORD]@[URL]/?[OPTIONS]"
 }
