@@ -3,7 +3,8 @@
 
 A script to iterate through all databases in a CosmosDB MongoDB API's cluster. 
 
-This script will pull storage usage, index usage, total requests for the last 90 days and collections information including the number of indexes and documents from an Azure account.
+This script will pull storage usage, index usage, total requests for the last 30 days and collections information including the number of indexes and documents from an Azure account.
+It will also collect Request Units and MongoDB Charge requests as available in Azure.
 
 # Prerequisites
 
@@ -34,7 +35,7 @@ Install-Module -Name Az.CosmosDB
 Install-Module -Name Mdbc [Mdbc Github page](https://github.com/nightroman/Mdbc)
 ```
 
-5. Update the settings.json file with the Atlas connection string to your cluster and the database that will capture the metrics
+5. Update the settings.json file with the Atlas connection string to your cluster and the name of the database that will store the metrics
 
 # Running the script
 
@@ -44,12 +45,7 @@ Connect-AzAccount
 ```
 
 2. Run the script
-To display the results as plain text in the terminal window
-```
-./cosmos-sizing-script.ps1
-```
-
-To push the output as a document to a MongoDB Atlas cluster over API
+The output will be pushed as a document to a MongoDB Atlas cluster over API
 ```
 ./cosmos-sizing-script-json.ps1
 ```

@@ -1,3 +1,5 @@
+# This script prints the results in a terminal window.
+# It collects data from all databases and displays it grouped per database.
 
 # Get the list of all document DBs in the Azure account
 $ids = (Get-AzResource -ResourceType Microsoft.DocumentDB/databaseAccounts).ResourceId

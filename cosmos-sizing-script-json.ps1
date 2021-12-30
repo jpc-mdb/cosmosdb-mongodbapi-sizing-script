@@ -1,3 +1,6 @@
+# This script saves the data as a document in an Atlas cluster. 
+# It combines the data from all databases and stores the results.
+
 #Global function to insert documents in a MongoDB Atlas cluster
 function Save-Document {
     
