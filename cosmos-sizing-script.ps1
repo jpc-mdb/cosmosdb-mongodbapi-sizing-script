@@ -1,10 +1,10 @@
 # This script prints the results in a terminal window.
 # It collects data from all databases and displays 
 
-# Get the list of all resource groups in the Azure account
+# Get the list of all subscriptions in the Azure account
 $ids = (Get-AzResource -ResourceType Microsoft.DocumentDB/databaseAccounts).ResourceId
 
-# Get data points for each resource group
+# Get data points for each subscription
 foreach($item in $ids){
     # Set up the global variables used to query the cluster
     $accountName = (Get-AzResource -ResourceId $item).Name
