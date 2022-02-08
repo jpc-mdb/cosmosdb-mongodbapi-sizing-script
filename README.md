@@ -56,6 +56,9 @@ To push the combined results of all databases as a document to a MongoDB Atlas c
 ```
 
 **`Notes`**
+
 *These commands assume that you are in the same folder as the script file*
+
+> *Due to the way Azure services behave, in some instances the script will return 0 for some metrics. This is due to the fact that the DB is in a sleep/cold state. It is therefore recommended to run the script twice to be sure to return metrics for all items*
 
 
